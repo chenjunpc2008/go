@@ -1,92 +1,90 @@
 package kthreadpool
 
 import (
-	"fmt"
-	"time"
+    "fmt"
 )
 
 const (
-	cGetTaskGap      = 5
-	cMaxTaskInOneRun = 2000
+    cGetTaskGap      = 1
+    cMaxTaskInOneRun = 2000
 )
 
 // thread
 type kThread struct {
-	tid     uint
-	tp      *ThreadPool
-	taskQue tQueue
+    tid     uint
+    tp      *ThreadPool
+    taskQue tQueue
 }
 
 //
 func newKThread(id uint, tp *ThreadPool) *kThread {
-	var th = &kThread{}
-	th.tid = id
-	th.tp = tp
-	th.taskQue.Init()
+    var th = &kThread{}
+    th.tid = id
+    th.tp = tp
+    th.taskQue.Init()
 
-	return th
+    return th
 }
 
 //
 func (th *kThread) GetTaskSize() int {
-	return th.taskQue.GetSize()
+    return th.taskQue.GetSize()
 }
 
 //
 func (th *kThread) AddTask(elem *Task) {
-	th.taskQue.PushBack(elem)
+    th.taskQue.PushBack(elem)
 }
 
 //
 func (th *kThread) Start() {
-	go threadRun(th)
+    go threadRun(th)
 }
 
 //
 func threadRun(th *kThread) {
-	var (
-		jobTodo *Task
-		have    int
-		i       int
-		tid     = th.tid
-	)
+    var (
+        jobTodo *Task
+        have    int
+        i       int
+        tid     = th.tid
 
-	timeout := time.Duration(cGetTaskGap) * time.Millisecond
+        // this chan is only for wait, because we checked out any
+        // time.Sleep() or time.After will() will cause a 15ms gap
+        chWait chan int = make(chan int)
+    )
 
-	for {
-		if 0 == have {
-			// don't have any jobs
-			select {
-			case <-time.After(timeout):
-				// sleep a while
+    // close the channel, use the channel for wait a little while
+    close(chWait)
 
-			}
-		}
-		select {
-		case <-th.tp.chExit:
-			sEventMsg := fmt.Sprintf("thread-id:%d exit", th.tid)
-			// fmt.Printf(sEventMsg)
-			th.tp.handler.OnEvent(sEventMsg)
-			return
+    for {
+        if th.tp.bExit {
+            sEventMsg := fmt.Sprintf("thread-id:%d exit", th.tid)
+            // fmt.Printf(sEventMsg)
+            th.tp.handler.OnEvent(sEventMsg)
+            return
+        }
 
-		default:
-		}
+        if 0 == have {
+            // wait for a while
+            _ = <-chWait
+        }
 
-		for i = 0; i < cMaxTaskInOneRun; i++ {
-			jobTodo, have = th.taskQue.PopFrontOne()
-			if 0 == have {
-				break
-			}
+        for i = 0; i < cMaxTaskInOneRun; i++ {
+            jobTodo, have = th.taskQue.PopFrontOne()
+            if 0 == have {
+                break
+            }
 
-			if nil == jobTodo {
-				sErrMsg := fmt.Sprintf("thread-id:%d have nil *Task", th.tid)
-				// fmt.Printf(sErrMsg)
-				th.tp.handler.OnError(sErrMsg)
-				continue
-			}
+            if nil == jobTodo {
+                sErrMsg := fmt.Sprintf("thread-id:%d have nil *Task", th.tid)
+                // fmt.Printf(sErrMsg)
+                th.tp.handler.OnError(sErrMsg)
+                continue
+            }
 
-			// run job
-			jobTodo.Data.Do(tid)
-		}
-	}
+            // run job
+            jobTodo.Data.Do(tid)
+        }
+    }
 }

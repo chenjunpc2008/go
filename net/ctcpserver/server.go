@@ -6,7 +6,6 @@ import (
     "net"
     "strconv"
     "strings"
-    "time"
 )
 
 // listen
@@ -187,7 +186,6 @@ func cliLoopSend(conn net.Conn, clientID uint64, cliIP string, cliAddr string, c
         bConnected  bool
         length      int
         err         error
-        timeout     = time.Duration(1) * time.Microsecond
     )
 
     for {
@@ -220,9 +218,7 @@ func cliLoopSend(conn net.Conn, clientID uint64, cliIP string, cliAddr string, c
                 //fmt.Printf("%v closing of client chExit-2, clientID:%v, ip:%v, addr:%v\n", ftag, clientID, cliIP, cliAddr)
                 return
 
-            case <-time.After(timeout):
-                // sleep a while
-
+            default:
             }
 
             continue

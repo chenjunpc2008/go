@@ -4,7 +4,6 @@ import (
     "fmt"
     "io"
     "net"
-    "time"
 )
 
 // connect to remote server
@@ -94,7 +93,6 @@ func cliLoopSend(conn net.Conn, ip string, port uint16, cli *CtcpCli) {
         bConnected  bool
         length      int
         err         error
-        timeout     = time.Duration(1) * time.Microsecond
     )
 
     for {
@@ -127,8 +125,7 @@ func cliLoopSend(conn net.Conn, ip string, port uint16, cli *CtcpCli) {
                 //fmt.Printf("%v closing of client chExit-2, ip:%s, port:%d\n", ftag, ip, port)
                 return
 
-            case <-time.After(timeout):
-                // sleep a while
+            default:
             }
 
             continue
