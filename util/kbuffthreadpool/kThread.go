@@ -1,11 +1,12 @@
-package kthreadpool
+package kbuffthreadpool
 
 import (
     "fmt"
+    "time"
 )
 
 const (
-    cGetTaskGap      = 1
+    cGetTaskGap      = 2
     cMaxTaskInOneRun = 2000
 )
 
@@ -49,13 +50,10 @@ func threadRun(th *kThread) {
         i       int
         tid     = th.tid
 
-        // this chan is only for wait, because we checked out any
-        // time.Sleep() or time.After will() will cause a 15ms gap
-        chWait chan int = make(chan int)
+        // time.Sleep() or time.After will() will cause a 15ms gap,
+        // probably because of goroutine rotation
+        timeout = time.Duration(cGetTaskGap) * time.Millisecond
     )
-
-    // close the channel, use the channel for wait a little while
-    close(chWait)
 
     for {
         if th.tp.bExit {
@@ -66,8 +64,12 @@ func threadRun(th *kThread) {
         }
 
         if 0 == have {
-            // wait for a while
-            _ = <-chWait
+            // don't have any jobs
+            select {
+            case <-time.After(timeout):
+                // sleep a while
+
+            }
         }
 
         for i = 0; i < cMaxTaskInOneRun; i++ {

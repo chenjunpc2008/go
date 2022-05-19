@@ -1,4 +1,4 @@
-package ctcpclient
+package cchantcpclient
 
 import "net"
 

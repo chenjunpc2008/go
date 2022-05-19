@@ -1,4 +1,4 @@
-package kthreadpool
+package kchanthreadpool
 
 import (
     "errors"
@@ -34,27 +34,30 @@ type PoolHandlerIF interface {
 
 // ThreadPool thread pool
 type ThreadPool struct {
-    bExit bool // flag for exit
+    chExit chan int // channel for exit
 
     numThreads uint
 
     threads []*kThread
     status  PoolStatus
     handler PoolHandlerIF
+
+    iBuffSizePerThread int
 }
 
 // NewThreadPool new thread pool
-func NewThreadPool(num uint, cb PoolHandlerIF) (*ThreadPool, error) {
+func NewThreadPool(num uint, buffsize int, cb PoolHandlerIF) (*ThreadPool, error) {
     var (
         tp  *ThreadPool = &ThreadPool{}
         err error
     )
 
     tp.handler = cb
-    tp.bExit = false
+    tp.chExit = make(chan int)
     tp.status = PoolStatusClosed
     tp.numThreads = num
     tp.threads = make([]*kThread, 0)
+    tp.iBuffSizePerThread = buffsize
 
     err = tp.init()
 
@@ -70,7 +73,7 @@ func (tp *ThreadPool) init() error {
     var childTh *kThread
 
     for i := uint(0); i < tp.numThreads; i++ {
-        childTh = newKThread(i, tp)
+        childTh = newKThread(i, tp.iBuffSizePerThread, tp)
         tp.threads = append(tp.threads, childTh)
     }
 
@@ -106,17 +109,22 @@ func (tp *ThreadPool) Stop() error {
         return errors.New("stop failed status in closed or stopping")
     }
 
-    tp.bExit = true
+    close(tp.chExit)
 
     tp.status = PoolStatusClosed
 
     return nil
 }
 
-// AddTaskByMini add task
-func (tp *ThreadPool) AddTaskByMini(elem *Task) error {
+/*
+AddTaskByMini add task
+
+@return busy bool : true -- buff is full, you may need to try again
+@return retErr error : error
+*/
+func (tp *ThreadPool) AddTaskByMini(elem *Task) (busy bool, retErr error) {
     if PoolStatusRunning != tp.status {
-        return fmt.Errorf("add task initialed when status:%d", tp.status)
+        return false, fmt.Errorf("add task initialed when status:%d", tp.status)
     }
 
     var (
@@ -147,18 +155,26 @@ func (tp *ThreadPool) AddTaskByMini(elem *Task) error {
     if nil == miniThread {
         sErrMsg := "nil threadHld to add task"
         tp.handler.OnError(sErrMsg)
-        return errors.New(sErrMsg)
+        return false, errors.New(sErrMsg)
     }
 
-    miniThread.AddTask(elem)
+    busy = miniThread.AddTask(elem)
+    if busy {
+        return true, nil
+    }
 
-    return nil
+    return false, nil
 }
 
-// AddTaskByKey add task
-func (tp *ThreadPool) AddTaskByKey(elem *Task) error {
+/*
+AddTaskByKey add task
+
+@return busy bool : true -- buff is full, you may need to try again
+@return retErr error : error
+*/
+func (tp *ThreadPool) AddTaskByKey(elem *Task) (busy bool, retErr error) {
     if PoolStatusRunning != tp.status {
-        return fmt.Errorf("add task initialed when status:%d", tp.status)
+        return false, fmt.Errorf("add task initialed when status:%d", tp.status)
     }
 
     var (
@@ -173,12 +189,15 @@ func (tp *ThreadPool) AddTaskByKey(elem *Task) error {
     if nil == destThread {
         sErrMsg := fmt.Sprint("nil threadHld to add task")
         tp.handler.OnError(sErrMsg)
-        return errors.New(sErrMsg)
+        return false, errors.New(sErrMsg)
     }
 
-    destThread.AddTask(elem)
+    busy = destThread.AddTask(elem)
+    if busy {
+        return true, nil
+    }
 
-    return nil
+    return false, nil
 }
 
 /*

@@ -1,4 +1,4 @@
-package ctcpserver
+package cchantcpserver
 
 // ProtocolIF interface to self define pack and depack
 type ProtocolIF interface {

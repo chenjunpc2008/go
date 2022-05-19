@@ -1,4 +1,4 @@
-package ctcpclient
+package cbufftcpclient
 
 import (
     "container/list"

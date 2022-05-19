@@ -1,4 +1,4 @@
-package ctcpclient
+package cbufftcpclient
 
 // EventHandler client callback control handler
 type EventHandler interface {

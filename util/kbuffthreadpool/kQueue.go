@@ -1,4 +1,4 @@
-package kthreadpool
+package kbuffthreadpool
 
 import "sync"
 

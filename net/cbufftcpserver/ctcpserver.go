@@ -2,7 +2,7 @@
 tcp server
 */
 
-package ctcpserver
+package cbufftcpserver
 
 import (
     "errors"

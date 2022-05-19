@@ -1,4 +1,4 @@
-package ctcpserver
+package cchantcpserver
 
 /*
 EventHandler server callback control handler
@@ -12,6 +12,8 @@ type EventHandler interface {
     OnReceiveData(clientID uint64, clientIP string, clientAddr string, pPacks []interface{})
     // data already sended event
     OnSendedData(clientID uint64, clientIP string, clientAddr string, msg interface{}, bysSended []byte, length int)
+    // event
+    OnEvent(msg string)
     // error
     OnError(msg string, err error)
     // error
