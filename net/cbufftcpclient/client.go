@@ -40,8 +40,8 @@ func cliLoopRead(conn net.Conn, ip string, port uint16,
     defer closeCliConn(conn, ip, port, cli)
 
     var (
-        allbuf            = make([]byte, 0, MaxRcvBufferCapSize)
-        buffer            = make([]byte, 4096, MaxRcvBufferCapSize)
+        allbuf            = make([]byte, 0)
+        buffer            = make([]byte, 4096)
         byAfterDepackBuff []byte
         lenRcv            int
         err               error

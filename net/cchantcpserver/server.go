@@ -126,10 +126,9 @@ func cliLoopRead(conn net.Conn, clientID uint64, cliIP string, cliAddr string, c
     svr.wg.Add(1)
     defer svr.wg.Done()
 
-    allbuf := make([]byte, 0, MaxRcvBufferCapSize)
-    buffer := make([]byte, 4096, MaxRcvBufferCapSize)
-
     var (
+        allbuf            = make([]byte, 0)
+        buffer            = make([]byte, 4096)
         byAfterDepackBuff []byte
         lenRcv            int
         err               error
@@ -142,7 +141,10 @@ func cliLoopRead(conn net.Conn, clientID uint64, cliIP string, cliAddr string, c
             select {
             case <-svr.chExit:
                 // server close
-                //fmt.Printf("%v closing of client chExit-1, clientID:%v, ip:%v, addr:%v\n", ftag, clientID, cliIP, cliAddr)
+                // fmt.Printf("%v closing of client chExit-1, clientID:%v, ip:%v, addr:%v\n", ftag, clientID, cliIP, cliAddr)
+
+                // manually empty
+                allbuf = make([]byte, 0)
                 return
 
             default:
@@ -150,9 +152,15 @@ func cliLoopRead(conn net.Conn, clientID uint64, cliIP string, cliAddr string, c
 
             if io.EOF == err {
                 svr.handler.OnCliErrorStr(clientID, cliIP, cliAddr, "read from conn EOF")
+
+                // manually empty
+                allbuf = make([]byte, 0)
                 break
             } else {
                 svr.handler.OnCliError(clientID, cliIP, cliAddr, "read from conn failed", err)
+
+                // manually empty
+                allbuf = make([]byte, 0)
                 break
             }
         }

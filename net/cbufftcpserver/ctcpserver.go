@@ -11,11 +11,6 @@ import (
     "sync"
 )
 
-const (
-    // MaxRcvBufferCapSize cap size
-    MaxRcvBufferCapSize = 15728640 // 1024*1024*15
-)
-
 func init() {
 
 }

@@ -8,10 +8,7 @@ import (
 
 const (
     // DefaultSendBuffSize default send buff size
-    DefaultSendBuffSize = 50 * 10000
-
-    // MaxRcvBufferCapSize cap size
-    MaxRcvBufferCapSize = 15728640 // 1024*1024*15
+    DefaultSendBuffSize = 1 * 10000
 )
 
 // Config extra config

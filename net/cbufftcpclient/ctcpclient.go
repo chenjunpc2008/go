@@ -7,11 +7,6 @@ import (
     "sync"
 )
 
-const (
-    // MaxRcvBufferCapSize cap size
-    MaxRcvBufferCapSize = 15728640 // 1024*1024*15
-)
-
 // Config extra config
 type Config struct {
     // after recieve a whole package, the receive callback will go sync or async
