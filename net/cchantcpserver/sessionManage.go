@@ -11,7 +11,7 @@ functions for tcp server clients manage
 // add new connection into server's client session management
 func svrNewConnection(conn net.Conn, clientID uint64, cliIP string, cliAddr string, svr *CtcpsvrSt) *clientSessnSt {
     cliSessn := svr.cliSns.addNewConnection(conn, clientID, cliIP, cliAddr, svr.cnf.SendBuffsize)
-    go svr.handler.OnNewConnection(clientID, cliIP, cliAddr)
+    svr.handler.OnNewConnection(clientID, cliIP, cliAddr)
     return cliSessn
 }
 
