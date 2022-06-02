@@ -1,44 +1,44 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"os"
-	"time"
+    "fmt"
+    "log"
+    "os"
+    "time"
 
-	"bnzq.com/common/panic-catch/cpanic"
+    "../cpanic"
 )
 
 var (
-	gPainicFile   *os.File
-	gPainicLogger *log.Logger
+    gPainicFile   *os.File
+    gPainicLogger *log.Logger
 )
 
 func main() {
 
-	var (
-		err error
-	)
+    var (
+        err error
+    )
 
-	lNow := time.Now().Unix()
+    lNow := time.Now().Unix()
 
-	sPFileName := fmt.Sprintf("%v_panic.log", lNow)
+    sPFileName := fmt.Sprintf("%v_panic.log", lNow)
 
-	// 将 stderr 重定向到 f
-	gPainicFile, gPainicLogger, err = cpanic.NewPanicFile(sPFileName)
-	if nil != err {
-		log.Printf("cpanic.NewPanicFile %v, ", time.Now())
-		return
-	}
+    // 将 stderr 重定向到 f
+    gPainicFile, gPainicLogger, err = cpanic.NewPanicFile(sPFileName)
+    if nil != err {
+        log.Printf("cpanic.NewPanicFile %v, ", time.Now())
+        return
+    }
 
-	var (
-		chExit chan int = make(chan int)
-	)
+    var (
+        chExit chan int = make(chan int)
+    )
 
-	go procPan()
+    go procPan()
 
-	select {
-	case <-chExit:
-		return
-	}
+    select {
+    case <-chExit:
+        return
+    }
 }

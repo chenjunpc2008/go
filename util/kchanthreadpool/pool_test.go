@@ -37,7 +37,7 @@ func Test_Pool_1(t *testing.T) {
 
     hld := new(myHld)
 
-    pool, err := NewThreadPool(3, hld, 200)
+    pool, err := NewThreadPool(3, 200, hld)
     assert.Equal(t, nil, err)
 
     err = pool.Start()
@@ -60,7 +60,7 @@ func Test_Pool_2(t *testing.T) {
 
     hld := new(myHld)
 
-    pool, err := NewThreadPool(1, hld, 200)
+    pool, err := NewThreadPool(1, 200, hld)
     assert.Equal(t, nil, err)
 
     err = pool.Start()
@@ -75,7 +75,7 @@ func Test_Pool_2(t *testing.T) {
         localJob = &myJob1{data: "task 1"}
         taskHold = NewTask()
         taskHold.Data = localJob
-        err = pool.AddTaskByMini(taskHold)
+        _, err = pool.AddTaskByMini(taskHold)
         assert.Equal(t, nil, err)
     }
 
@@ -83,7 +83,7 @@ func Test_Pool_2(t *testing.T) {
         localJob = &myJob1{data: "task 2"}
         taskHold = NewTask()
         taskHold.Data = localJob
-        err = pool.AddTaskByMini(taskHold)
+        _, err = pool.AddTaskByMini(taskHold)
         assert.Equal(t, nil, err)
     }
 
@@ -91,7 +91,7 @@ func Test_Pool_2(t *testing.T) {
         localJob = &myJob1{data: "task 3"}
         taskHold = NewTask()
         taskHold.Data = localJob
-        err = pool.AddTaskByMini(taskHold)
+        _, err = pool.AddTaskByMini(taskHold)
         assert.Equal(t, nil, err)
     }
 
@@ -112,7 +112,7 @@ func Test_Pool_3(t *testing.T) {
     runtime.GOMAXPROCS(20)
 
     hld := new(myHld)
-    pool, err := NewThreadPool(3, hld, 200)
+    pool, err := NewThreadPool(3, 200, hld)
     assert.Equal(t, nil, err)
 
     err = pool.Start()
@@ -128,7 +128,7 @@ func Test_Pool_3(t *testing.T) {
         localJob = &myJob1{data: msg}
         taskHold = NewTask()
         taskHold.Data = localJob
-        err = pool.AddTaskByMini(taskHold)
+        _, err = pool.AddTaskByMini(taskHold)
         assert.Equal(t, nil, err)
 
     }
@@ -142,7 +142,7 @@ func Test_Pool_3(t *testing.T) {
         localJob = &myJob1{data: msg}
         taskHold = NewTask()
         taskHold.Data = localJob
-        err = pool.AddTaskByMini(taskHold)
+        _, err = pool.AddTaskByMini(taskHold)
         assert.Equal(t, nil, err)
 
     }
