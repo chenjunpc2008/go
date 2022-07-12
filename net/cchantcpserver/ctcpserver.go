@@ -39,15 +39,22 @@ type Config struct {
     // tcp send buff size
     SendBuffsize int
 
-    // AsyncReceive after recieve a whole package, the receive callback will go sync or async
+    // AsyncReceive after recieve a whole package, the receive callback will go async or sync
     AsyncReceive bool
+
+    // after data write to tcp sys buff, do OnSendedData() call back require
+    RequireSendedCb bool
+    // sended callback if async or sync
+    AsyncSended bool
 }
 
 // DefaultConfig default Config
 func DefaultConfig() Config {
     return Config{
-        SendBuffsize: DefaultSendBuffSize,
-        AsyncReceive: true,
+        SendBuffsize:    DefaultSendBuffSize,
+        AsyncReceive:    true,
+        RequireSendedCb: true,
+        AsyncSended:     true,
     }
 }
 

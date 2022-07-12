@@ -103,7 +103,8 @@ func handleNewIncoming(conn net.Conn, clientID uint64, svr *CtcpsvrSt) {
     cliSessn = svrNewConnection(conn, clientID, sIP, sAddr, svr)
 
     go cliLoopRead(conn, clientID, sIP, sAddr, cliSessn, svr, svr.cnf.AsyncReceive)
-    go cliLoopSend(conn, clientID, sIP, sAddr, cliSessn.chMsgsToBeSend, cliSessn, svr)
+    go cliLoopSend(conn, clientID, sIP, sAddr, cliSessn.chMsgsToBeSend, cliSessn, svr,
+        svr.cnf.RequireSendedCb, svr.cnf.AsyncSended)
 }
 
 func closeCliConn(conn net.Conn, clientID uint64, cliIP string, cliAddr string, cliSessn *clientSessnSt, svr *CtcpsvrSt) {
@@ -180,7 +181,7 @@ func cliLoopRead(conn net.Conn, clientID uint64, cliIP string, cliAddr string, c
 // loop send for client send
 func cliLoopSend(conn net.Conn, clientID uint64, cliIP string, cliAddr string,
     chMsgsToBeSend <-chan interface{}, cliSessn *clientSessnSt,
-    svr *CtcpsvrSt) {
+    svr *CtcpsvrSt, requireSendedCb bool, asyncSended bool) {
     const ftag = "cliLoopSend()"
 
     // close count
@@ -247,8 +248,7 @@ func cliLoopSend(conn net.Conn, clientID uint64, cliIP string, cliAddr string,
             break
         }
 
-        go cliDataSended(clientID, cliIP, cliAddr, msg, bysTobeSend, length, svr)
-
+        cliDataSended(clientID, cliIP, cliAddr, msg, bysTobeSend, length, svr, requireSendedCb, asyncSended)
     }
 
     // fmt.Printf("%v end loop of client send, clientID:%v, ip:%v, addr:%v\n", ftag, clientID, cliIP, cliAddr)

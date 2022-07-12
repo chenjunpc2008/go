@@ -32,10 +32,18 @@ func cliDataRcved(ip string, port uint16, length int, rawData []byte,
 }
 
 // data already sened
-func cliDataSended(ip string, port uint16, msg interface{}, bysSended []byte, length int, cli *CtcpCli) {
+func cliDataSended(ip string, port uint16, msg interface{}, bysSended []byte, length int, cli *CtcpCli,
+    requireSendedCb bool, asyncSended bool) {
     // if need to count outgoing traffic, could be here
     //
 
     // report
-    cli.handler.OnSendedData(ip, port, msg, bysSended, length)
+    if requireSendedCb {
+        if asyncSended {
+            go cli.handler.OnSendedData(ip, port, msg, bysSended, length)
+        } else {
+            cli.handler.OnSendedData(ip, port, msg, bysSended, length)
+        }
+    }
+
 }

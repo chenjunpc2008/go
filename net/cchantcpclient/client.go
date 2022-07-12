@@ -19,7 +19,8 @@ func connectToServer(ip string, port uint16, cli *CtcpCli) error {
     cliNewConnection(conn, ip, port, cli)
 
     go cliLoopRead(conn, ip, port, cli, cli.cnf.AsyncReceive)
-    go cliLoopSend(conn, ip, port, cli.chMsgsToBeSend, cli)
+    go cliLoopSend(conn, ip, port, cli.chMsgsToBeSend, cli,
+        cli.cnf.RequireSendedCb, cli.cnf.AsyncSended)
 
     return nil
 }
@@ -83,7 +84,8 @@ func cliLoopRead(conn net.Conn, ip string, port uint16,
 
 // loop send for client send
 func cliLoopSend(conn net.Conn, ip string, port uint16,
-    chMsgsToBeSend <-chan interface{}, cli *CtcpCli) {
+    chMsgsToBeSend <-chan interface{}, cli *CtcpCli,
+    requireSendedCb bool, asyncSended bool) {
     const ftag = "cliLoopSend()"
 
     var (
@@ -137,7 +139,7 @@ func cliLoopSend(conn net.Conn, ip string, port uint16,
             continue
         }
 
-        go cliDataSended(ip, port, msg, bysTobeSend, length, cli)
+        cliDataSended(ip, port, msg, bysTobeSend, length, cli, requireSendedCb, asyncSended)
     }
 
     //fmt.Printf("%v end loop of client send, ip:%s, port:%d\n", ftag, ip, port)

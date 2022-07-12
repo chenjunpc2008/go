@@ -42,10 +42,17 @@ func cliDataRcved(clientID uint64, cliIP string, cliAddr string, length int, raw
 }
 
 // client data already sended
-func cliDataSended(clientID uint64, cliIP string, cliAddr string, msg interface{}, bysSended []byte, length int, svr *CtcpsvrSt) {
+func cliDataSended(clientID uint64, cliIP string, cliAddr string, msg interface{}, bysSended []byte, length int, svr *CtcpsvrSt,
+    requireSendedCb bool, asyncSended bool) {
     // if need to count outgoing traffic, could be here
     //
 
     // report
-    svr.handler.OnSendedData(clientID, cliIP, cliAddr, msg, bysSended, length)
+    if requireSendedCb {
+        if asyncSended {
+            go svr.handler.OnSendedData(clientID, cliIP, cliAddr, msg, bysSended, length)
+        } else {
+            svr.handler.OnSendedData(clientID, cliIP, cliAddr, msg, bysSended, length)
+        }
+    }
 }
