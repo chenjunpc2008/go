@@ -1,4 +1,4 @@
-module go
+module github.com/chenjunpc2008/go
 
 go 1.17
 
