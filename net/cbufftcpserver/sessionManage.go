@@ -28,7 +28,7 @@ func cliDataRcved(clientID uint64, cliIP string, cliAddr string, length int, raw
     //
 
     // self define message depack protocol
-    byAfterDepackBuff, pPacks := svr.handler.Depack(rawData)
+    byAfterDepackBuff, pPacks := svr.handler.Depack(clientID, cliIP, cliAddr, rawData)
 
     if nil != pPacks && 0 != len(pPacks) {
         if asyncReceive {

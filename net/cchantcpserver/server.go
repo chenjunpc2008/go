@@ -218,7 +218,7 @@ func cliLoopSend(conn net.Conn, clientID uint64, cliIP string, cliAddr string,
             }
         }
 
-        bysTobeSend, err = svr.handler.Pack(clientID, msg)
+        bysTobeSend, err = svr.handler.Pack(clientID, cliIP, cliAddr, msg)
         if nil != err {
             svr.handler.OnCliError(clientID, cliIP, cliAddr, "pack failed", err)
             continue
