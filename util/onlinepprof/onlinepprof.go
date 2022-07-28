@@ -1,44 +1,57 @@
 package onlinepprof
 
 import (
-	"fmt"
-	"net/http"
+    "fmt"
+    "log"
+    "net/http"
 
-	// pprof
-	_ "net/http/pprof"
+    // pprof
+    _ "net/http/pprof"
 )
 
 /*
 StartOnlinePprof net pprof
 */
-func StartOnlinePprof(bEnable bool, httpPort uint16, bPanicIfFailed bool) error {
-	if bEnable {
-		sAddr := fmt.Sprintf(":%d", httpPort)
-		go procPprofListen(sAddr, bPanicIfFailed)
-	}
+func StartOnlinePprof(bEnable bool, httpPort uint16, bPanicIfFailed bool) (*http.Server, error) {
+    if !bEnable {
+        return nil, nil
+    }
 
-	return nil
+    sAddr := fmt.Sprintf(":%d", httpPort)
+    var svr = &http.Server{
+        Addr: sAddr,
+    }
+
+    /*
+       http://127.0.0.1:10108/debug/pprof/
+    */
+
+    // For load balance keep alive and pprof debug
+    // 提供给负载均衡探活以及pprof调试
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        w.Write([]byte("ok"))
+    })
+
+    go procPprofListen(sAddr, bPanicIfFailed, svr)
+
+    return svr, nil
 }
 
-func procPprofListen(addr string, bPanicIfFailed bool) {
-	const ftag = "online_pprof.procPprofListen()"
+func procPprofListen(addr string, bPanicIfFailed bool, svr *http.Server) {
+    const ftag = "online_pprof.procPprofListen()"
 
-	/*
-		http://127.0.0.1:10108/debug/pprof/
-	*/
+    var err error = svr.ListenAndServe()
+    if nil != err {
+        sErrMsg := fmt.Sprintf("%v http.ListenAndServe failed, addr:%v, err:%v", ftag, addr, err)
+        fmt.Println(sErrMsg)
+        log.Println(sErrMsg)
 
-	// For load balance keep alive and pprof debug
-	// 提供给负载均衡探活以及pprof调试
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("ok"))
-	})
-
-	var err error = http.ListenAndServe(addr, nil)
-	if nil != err {
-		sErrMsg := fmt.Sprintf("%v http.ListenAndServe failed, err:%v", ftag, err)
-		fmt.Printf(sErrMsg)
-		if bPanicIfFailed {
-			panic(sErrMsg)
-		}
-	}
+        if http.ErrServerClosed != err {
+            if bPanicIfFailed {
+                panic(sErrMsg)
+            }
+        } else {
+            log.Println("http server Shutdown or Close")
+        }
+    }
 }
