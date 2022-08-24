@@ -2,7 +2,7 @@
 // +build darwin
 
 /*
-Package wppanic Log the panic under darwin to the log file
+Package wppanic Log the panic under mac darwin to the log file
 */
 
 package cpanic
