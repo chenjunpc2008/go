@@ -85,7 +85,7 @@ func (sn *clientSessnSt) putSendMsg(msg interface{}) (busy bool, retErr error) {
 /*
 @return busy bool : true -- buff is full, you may need to try again
 */
-func (sn *clientSessnSt) getDebugInfo() (debug CliDebufInfoSt) {
+func (sn *clientSessnSt) getDebugInfo() (debug CliDebugInfoSt) {
 	// lock
 	sn.lock.Lock()
 
@@ -183,13 +183,13 @@ func (sns *clientSnsSt) getClientSession(clientID uint64) (*clientSessnSt, bool)
 }
 
 // get client session object
-func (sns *clientSnsSt) getDebugInfos() (infos []CliDebufInfoSt) {
+func (sns *clientSnsSt) getDebugInfos() (infos []CliDebugInfoSt) {
 	// lock
 	sns.lock.Lock()
 	defer sns.lock.Unlock()
 
 	var (
-		cliInfo CliDebufInfoSt
+		cliInfo CliDebugInfoSt
 	)
 
 	for _, v := range sns.mapCliSess {

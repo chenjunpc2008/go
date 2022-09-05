@@ -203,14 +203,15 @@ func (t *CtcpsvrSt) CloseClients(clientIDs []uint64, reason string) {
 	closeClients(clientIDs, reason, t)
 }
 
-type CliDebufInfoSt struct {
+// CliDebugInfoSt client debug info
+type CliDebugInfoSt struct {
 	ClientID     uint64 `json:"ClientID"`
 	Addr         string `json:"Addr"`
 	SendBuffSize int    `json:"SendBuffSize"`
 }
 
 // GetDebugInfo clients debug infos
-func (t *CtcpsvrSt) GetDebugInfo() (debug []CliDebufInfoSt) {
+func (t *CtcpsvrSt) GetDebugInfo() (debug []CliDebugInfoSt) {
 	if ServerStatusRunning != t.svrStatus {
 		return
 	}
