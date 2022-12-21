@@ -6,7 +6,7 @@ import (
     "os"
     "time"
 
-    "../cpanic"
+    "github.com/chenjunpc2008/go/util/panic-catch/cpanic"
 )
 
 var (
