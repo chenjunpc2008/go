@@ -1,3 +1,6 @@
+/*
+Package onlinepprof net pprof
+*/
 package onlinepprof
 
 import (
@@ -40,7 +43,7 @@ func StartOnlinePprof(bEnable bool, httpPort uint16, bPanicIfFailed bool) (*http
 func procPprofListen(addr string, bPanicIfFailed bool, svr *http.Server) {
     const ftag = "online_pprof.procPprofListen()"
 
-    var err error = svr.ListenAndServe()
+    var err = svr.ListenAndServe()
     if nil != err {
         sErrMsg := fmt.Sprintf("%v http.ListenAndServe failed, addr:%v, err:%v", ftag, addr, err)
         fmt.Println(sErrMsg)

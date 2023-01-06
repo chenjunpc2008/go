@@ -1,9 +1,12 @@
+/*
+Package cpanic panic redirect to file
+*/
 package cpanic
 
 import (
-	"fmt"
-	"log"
-	"os"
+    "fmt"
+    "log"
+    "os"
 )
 
 /*
@@ -15,21 +18,21 @@ NewPanicFile new panic file, redirect stderr to panic file
 */
 func NewPanicFile(path string) (*os.File, *log.Logger, error) {
 
-	f, err := os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm)
-	if nil != err {
-		log.Printf("os.Create failed: %v", err)
-		fmt.Printf("os.Create failed: %v", err)
-		return nil, nil, err
-	}
+    f, err := os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm)
+    if nil != err {
+        log.Printf("os.Create failed: %v", err)
+        fmt.Printf("os.Create failed: %v", err)
+        return nil, nil, err
+    }
 
-	loger := log.New(f, "", log.LstdFlags)
+    loger := log.New(f, "", log.LstdFlags)
 
-	err = redirectStderr(f)
-	if nil != err {
-		log.Printf("redirectStderr failed: %v", err)
-		fmt.Printf("redirectStderr failed: %v", err)
-		return nil, nil, err
-	}
+    err = redirectStderr(f)
+    if nil != err {
+        log.Printf("redirectStderr failed: %v", err)
+        fmt.Printf("redirectStderr failed: %v", err)
+        return nil, nil, err
+    }
 
-	return f, loger, nil
+    return f, loger, nil
 }

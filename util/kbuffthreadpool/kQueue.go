@@ -46,10 +46,13 @@ func (q *tQueue) PopFrontOne() (*Task, int) {
         return nil, 0
     }
 
-    var ta *Task
+    var ta = q.buff[0]
 
-    ta = q.buff[0]
-    q.buff = q.buff[1:]
+    if 1 == len(q.buff) {
+        q.buff = make([]*Task, 0)
+    } else {
+        q.buff = q.buff[1:]
+    }
 
     // unlock
     q.lock.Unlock()

@@ -1,3 +1,11 @@
+/*
+Package kbuffthreadpool 协程池
+
+说明
+使用buff做任务队列的协程池
+每个协程仅从自身任务队列中取任务，这样可以减少锁的争抢
+每个任务可分配至最少任务的队列中，也可根据任务key值分配到相同的任务池，以此来保证任务的严格串行
+*/
 package kbuffthreadpool
 
 import (
@@ -171,7 +179,7 @@ func (tp *ThreadPool) AddTaskByKey(elem *Task) error {
     destThread = tp.threads[dest]
 
     if nil == destThread {
-        sErrMsg := fmt.Sprint("nil threadHld to add task")
+        sErrMsg := "nil threadHld to add task"
         tp.handler.OnError(sErrMsg)
         return errors.New(sErrMsg)
     }
