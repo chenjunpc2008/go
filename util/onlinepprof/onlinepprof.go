@@ -15,10 +15,7 @@ import (
 /*
 StartOnlinePprof net pprof
 */
-func StartOnlinePprof(bEnable bool, httpPort uint16, bPanicIfFailed bool) (*http.Server, error) {
-    if !bEnable {
-        return nil, nil
-    }
+func StartOnlinePprof(httpPort uint16, bPanicIfFailed bool) (*http.Server, error) {
 
     sAddr := fmt.Sprintf(":%d", httpPort)
     var svr = &http.Server{
