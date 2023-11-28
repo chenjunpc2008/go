@@ -188,6 +188,7 @@ func cliLoopSend(conn net.Conn, clientID uint64, cliIP string, cliAddr string, c
         err         error
         ticker      = time.NewTicker(time.Duration(1) * time.Microsecond)
     )
+    defer ticker.Stop()
 
     for {
         bysTobeSend = dumyBys

@@ -99,6 +99,7 @@ func cliLoopSend(conn net.Conn, ip string, port uint16, cli *CtcpCli) {
         err         error
         ticker      = time.NewTicker(1 * time.Microsecond)
     )
+    defer ticker.Stop()
 
     for {
         bysTobeSend = dumyBys

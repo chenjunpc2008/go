@@ -54,6 +54,7 @@ func threadRun(th *kThread) {
         // probably because of goroutine rotation
         ticker = time.NewTicker(cGetTaskGap * time.Microsecond)
     )
+    defer ticker.Stop()
 
     for {
         if th.tp.bExit {
