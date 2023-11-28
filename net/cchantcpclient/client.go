@@ -1,3 +1,6 @@
+/*
+Package cchantcpclient tcp client
+*/
 package cchantcpclient
 
 import (
@@ -86,7 +89,7 @@ func cliLoopRead(conn net.Conn, ip string, port uint16,
 func cliLoopSend(conn net.Conn, ip string, port uint16,
     chMsgsToBeSend <-chan interface{}, cli *CtcpCli,
     requireSendedCb bool, asyncSended bool) {
-    const ftag = "cliLoopSend()"
+    // const ftag = "cliLoopSend()"
 
     var (
         bysTobeSend []byte

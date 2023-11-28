@@ -1,7 +1,6 @@
 /*
-tcp server
+Package cbufftcpserver tcp server
 */
-
 package cbufftcpserver
 
 import (
@@ -55,7 +54,7 @@ type CtcpsvrSt struct {
 NewTCPSvr new ctcpserver object
 */
 func NewTCPSvr(eventCb EventHandler, cnf Config) *CtcpsvrSt {
-    var svr *CtcpsvrSt = &CtcpsvrSt{clientID: 0}
+    var svr = &CtcpsvrSt{clientID: 0}
     svr.cnf = cnf
 
     svr.cliSns.init()

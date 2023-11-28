@@ -52,7 +52,7 @@ func threadRun(th *kThread) {
 
         // time.Sleep() or time.After will() will cause a 15ms gap,
         // probably because of goroutine rotation
-        timeout = time.Duration(cGetTaskGap) * time.Millisecond
+        ticker = time.NewTicker(cGetTaskGap * time.Microsecond)
     )
 
     for {
@@ -65,11 +65,8 @@ func threadRun(th *kThread) {
 
         if 0 == have {
             // don't have any jobs
-            select {
-            case <-time.After(timeout):
-                // sleep a while
-
-            }
+            <-ticker.C
+            // sleep a while
         }
 
         for i = 0; i < cMaxTaskInOneRun; i++ {

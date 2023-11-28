@@ -54,7 +54,7 @@ type ThreadPool struct {
 // NewThreadPool new thread pool
 func NewThreadPool(num uint, cb PoolHandlerIF) (*ThreadPool, error) {
     var (
-        tp  *ThreadPool = &ThreadPool{}
+        tp  = &ThreadPool{}
         err error
     )
 

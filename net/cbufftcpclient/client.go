@@ -1,3 +1,6 @@
+/*
+Package cbufftcpclient tcp client
+*/
 package cbufftcpclient
 
 import (
@@ -84,7 +87,7 @@ func cliLoopRead(conn net.Conn, ip string, port uint16,
 
 // loop send for client send
 func cliLoopSend(conn net.Conn, ip string, port uint16, cli *CtcpCli) {
-    const ftag = "cliLoopSend()"
+    // const ftag = "cliLoopSend()"
 
     var (
         bysTobeSend []byte
@@ -94,7 +97,7 @@ func cliLoopSend(conn net.Conn, ip string, port uint16, cli *CtcpCli) {
         bConnected  bool
         length      int
         err         error
-        timeout     = time.Duration(1) * time.Microsecond
+        ticker      = time.NewTicker(1 * time.Microsecond)
     )
 
     for {
@@ -127,7 +130,7 @@ func cliLoopSend(conn net.Conn, ip string, port uint16, cli *CtcpCli) {
                 //fmt.Printf("%v closing of client chExit-2, ip:%s, port:%d\n", ftag, ip, port)
                 return
 
-            case <-time.After(timeout):
+            case <-ticker.C:
                 // sleep a while
 
             default:
